@@ -320,6 +320,11 @@
   if (_layerModel.imageAsset.imageName) {
     NSArray *components = [_layerModel.imageAsset.imageName componentsSeparatedByString:@"."];
     UIImage *image = [UIImage imageNamed:components.firstObject];
+      if (image == nil) {
+          NSString *imagePath = [NSString stringWithFormat:@"%@%@", _layerModel.imageAsset.imageDirectory, _layerModel.imageAsset.imageName];
+          image = [UIImage imageWithContentsOfFile:imagePath];
+      }
+      
     if (image) {
       _childSolid.contents = (__bridge id _Nullable)(image.CGImage);
     } else {

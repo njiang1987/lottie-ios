@@ -17,6 +17,14 @@ typedef void (^LOTAnimationCompletionBlock)(BOOL animationFinished);
 + (instancetype)animationNamed:(NSString *)animationName inBundle:(NSBundle *)bundle NS_SWIFT_NAME(init(name:bundle:));
 + (instancetype)animationFromJSON:(NSDictionary *)animationJSON NS_SWIFT_NAME(init(json:));
 
+/**
+ * 通过文件夹的路径初始化动画，
+ * 动画的json必须为: data.json
+ * 图片的路径必须为: images/
+ */
++ (instancetype)animationFromDirectory:(NSString *)directory;
++ (instancetype)animationFromDirectory:(NSString *)directory json:(NSString *)json imageDirectory:(NSString *)imageDirectory;
+
 - (instancetype)initWithContentsOfURL:(NSURL *)url;
 
 @property (nonatomic, readonly) BOOL isAnimationPlaying;

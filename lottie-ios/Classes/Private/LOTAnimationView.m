@@ -175,6 +175,7 @@
   LOTCompositionLayer *_compLayer;
   CADisplayLink *_completionDisplayLink;
   BOOL hasFullyInitialized_;
+    NSString *_imageDirectory;
 }
 
 # pragma mark - Initializers
@@ -213,6 +214,54 @@
 + (instancetype)animationFromJSON:(NSDictionary *)animationJSON {
   LOTComposition *laScene = [[LOTComposition alloc] initWithJSON:animationJSON];
   return [[LOTAnimationView alloc] initWithModel:laScene];
+}
+
++ (instancetype)animationFromDirectory:(NSString *)directory{
+    return [LOTAnimationView animationFromDirectory:directory json:@"data.json" imageDirectory:@"images/"];
+}
+
++ (instancetype)animationFromDirectory:(NSString *)directory json:(NSString *)json imageDirectory:(NSString *)imageDirectory{
+    
+    if (directory == nil) {
+        return nil;
+    }
+    
+    NSString *jsonName = json ?: @"data.json";
+    NSString *fullImageDirectory = imageDirectory ?: @"images/";
+    
+    if ([[fullImageDirectory substringFromIndex:fullImageDirectory.length - 1] isEqualToString:@"/"] == NO) {
+        fullImageDirectory = [fullImageDirectory stringByAppendingString:@"/"];
+    }
+    
+    NSString *fullJSONPath = nil;
+    if ([[directory substringFromIndex:directory.length - 1] isEqualToString:@"/"]) {
+        fullJSONPath = [directory stringByAppendingString:jsonName];
+        fullImageDirectory = [directory stringByAppendingString:imageDirectory];
+    }
+    else{
+        fullJSONPath = [NSString stringWithFormat:@"%@/%@", directory, jsonName];
+        fullImageDirectory = [NSString stringWithFormat:@"%@/%@", directory, imageDirectory];
+    }
+    
+    LOTComposition *comp = [[LOTAnimationCache sharedCache] animationForKey:fullJSONPath];
+    if (comp) {
+        return [[LOTAnimationView alloc] initWithModel:comp];
+    }
+    
+    NSError *error;
+    NSData *jsonData = [[NSData alloc] initWithContentsOfFile:fullJSONPath];
+    NSDictionary  *JSONObject = jsonData ? [NSJSONSerialization JSONObjectWithData:jsonData
+                                                                           options:0 error:&error] : nil;
+    if (JSONObject && !error) {
+        LOTComposition *laScene = [[LOTComposition alloc] initWithJSON:JSONObject imageDirectory:fullImageDirectory];
+        [[LOTAnimationCache sharedCache] addAnimation:laScene forKey:fullJSONPath];
+        return [[LOTAnimationView alloc] initWithModel:laScene];
+    }
+    
+    NSException* resourceNotFoundException = [NSException exceptionWithName:@"ResourceNotFoundException"
+                                                                     reason:[error localizedDescription]
+                                                                   userInfo:nil];
+    @throw resourceNotFoundException;
 }
 
 - (instancetype)initWithContentsOfURL:(NSURL *)url {

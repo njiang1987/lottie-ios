@@ -14,14 +14,17 @@
 @implementation LOTComposition
 
 - (instancetype)initWithJSON:(NSDictionary *)jsonDictionary {
-  self = [super init];
-  if (self) {
-    [self _mapFromJSON:jsonDictionary];
-  }
-  return self;
+    return [self initWithJSON:jsonDictionary imageDirectory:nil];
 }
 
-- (void)_mapFromJSON:(NSDictionary *)jsonDictionary {
+- (instancetype)initWithJSON:(NSDictionary *)jsonDictionary imageDirectory:(NSString *)imageDirectory{
+    if (self = [super init]) {
+        [self _mapFromJSON:jsonDictionary imageDirectory:imageDirectory];
+    }
+    return self;
+}
+
+- (void)_mapFromJSON:(NSDictionary *)jsonDictionary imageDirectory:(NSString *)imageDirectory {
   NSNumber *width = jsonDictionary[@"w"];
   NSNumber *height = jsonDictionary[@"h"];
   if (width && height) {
@@ -42,6 +45,7 @@
   NSArray *assetArray = jsonDictionary[@"assets"];
   if (assetArray.count) {
     _assetGroup = [[LOTAssetGroup alloc] initWithJSON:assetArray];
+      _assetGroup.imageDirectory = imageDirectory;
   }
   
   NSArray *layersJSON = jsonDictionary[@"layers"];

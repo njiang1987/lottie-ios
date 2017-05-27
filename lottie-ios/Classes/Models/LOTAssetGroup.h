@@ -13,6 +13,8 @@
 @class LOTLayerGroup;
 @interface LOTAssetGroup : NSObject
 
+@property (nonatomic, copy) NSString *imageDirectory;
+
 - (instancetype _Nonnull)initWithJSON:(NSArray * _Nonnull)jsonArray;
 
 - (void)buildAssetNamed:(NSString * _Nonnull)refID

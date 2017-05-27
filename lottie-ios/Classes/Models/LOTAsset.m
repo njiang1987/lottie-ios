@@ -41,10 +41,13 @@
   if (jsonDictionary[@"h"]) {
     _assetHeight = [jsonDictionary[@"h"] copy];
   }
-  
-  if (jsonDictionary[@"u"]) {
-    _imageDirectory = [jsonDictionary[@"u"] copy];
-  }
+
+    if (assetGroup.imageDirectory) {
+        _imageDirectory = assetGroup.imageDirectory;
+    }
+    else if (jsonDictionary[@"u"]) {
+        _imageDirectory = [jsonDictionary[@"u"] copy];
+    }
   
   if (jsonDictionary[@"p"]) {
     _imageName = [jsonDictionary[@"p"] copy];
